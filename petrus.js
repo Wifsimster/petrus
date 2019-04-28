@@ -7,26 +7,29 @@ const puppeteer = require("puppeteer")
 const Transmission = require("transmission")
 
 const config = require("./transmission-config")
-const shows = require(`./shows`)
 
 module.exports = class {
   constructor() {}
 
-  static async run() {
-    shows.map(async show => {
-      const magnetUrl = await this.getMagnetLink(show.name)
+  static async run(shows) {
+    if (shows && shows.length > 0) {
+      shows.map(async show => {
+        const magnetUrl = await this.getMagnetLink(show)
 
-      if (magnetUrl) {
-        const download = await this.addMagnetLink(magnetUrl)
-        if (download && download.id) {
-          console.log(download)
+        if (magnetUrl) {
+          const download = await this.addMagnetLink(magnetUrl)
+          if (download && download.id) {
+            console.log(download)
+          } else {
+            console.error(`Magnet link was not added to Transmission !`)
+          }
         } else {
-          console.error(`Magnet link was not added to Transmission !`)
+          console.error(`No magnet link found for "${show}"`)
         }
-      } else {
-        console.error(`No magnet link found for "${show}"`)
-      }
-    })
+      })
+    } else {
+      console.error(`No show found !`)
+    }
   }
 
   static addMagnetLink(magnetLink) {

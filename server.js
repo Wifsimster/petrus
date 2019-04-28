@@ -1,3 +1,4 @@
 const Petrus = require("./petrus")
+const shows = require(`./shows`)
 
-Petrus.run()
+Petrus.run(shows)
