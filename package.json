@@ -1,0 +1,23 @@
+{
+  "name": "petrus",
+  "version": "1.0.0",
+  "description": "A JavaScript library that can simply [...].",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wifsimster/petrus.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Wifsimster/petrus/issues"
+  },
+  "homepage": "https://github.com/Wifsimster/petrus#readme",
+  "dependencies": {
+    "puppeteer": "^1.15.0",
+    "transmission": "^0.4.9"
+  }
+}
