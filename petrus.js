@@ -51,16 +51,66 @@ module.exports = class {
   }
 
   static async getMagnetLink(query) {
-    const browser = await puppeteer.launch()
-    const page = await browser.newPage()
-    const showQuery = encodeURIComponent(query)
-    await page.goto(`https://thepiratebay.org/search/${showQuery}/0/99/208`)
-    // await page.goto(`https://thepiratebay.org/search/${showQuery}/0/99/205`)
-    const element = await page.$('[href*="magnet:"]')
-    const href = await page.evaluate(e => e.href, element)
-    await browser.close()
-    return href
+    try {
+      const browser = await puppeteer.launch()
+      const page = await browser.newPage()
+      const showQuery = encodeURIComponent(query)
 
-    // TODO : Need to be sure magnet link is an episode and not a compilation/season
+      await page.goto(`https://thepiratebay.org/search/${showQuery}/0/7/0`) // Order by Seeder
+
+      const rows = await page.$$eval(`#searchResult > tbody > tr`, elements => {
+        return elements.map(el => {
+          return el.innerHTML
+        })
+      })
+
+      await browser.close()
+
+      const downloads = this.parseInfo(rows, showQuery)
+
+      const bestDownload = this.getBestPossibleDownload(downloads)
+
+      return bestDownload.magnet
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  static getBestPossibleDownload(downloads) {
+    downloads.map(item => {
+      if (!/season/i.exec(item.name)) {
+        return item.magnet
+      }
+    })
+  }
+
+  static parseInfo(rows, showName) {
+    return rows.map(row => {
+      let matchMagnetLink = /href="(magnet:[\S]+)"\s/g.exec(row)
+      let matchTvShowQuality = /href="\/browse\/205[\S]*"/g.exec(row)
+      let matchHdTvShowQuality = /href="\/browse\/208[\S]*"/g.exec(row)
+      let matchDate = /<font class="[\s\S]+">Uploaded ([\s\S]+)&nbsp;\d/g.exec(
+        row
+      )
+      let matchSize = /<font class="[\s\S]+">[\s\S]+Size ([\s\S]+)&nbsp;([\s\S]+),/g.exec(
+        row
+      )
+      let matchSeeder = /<td align="right">([\d]+)<\/td>/.exec(row)
+      let matchName = /href="\/torrent\/[\d]+\/([\S]+)"/.exec(row)
+
+      // Return only `Tv Shows` or `HD - Tv Shows`
+      if (matchHdTvShowQuality || matchTvShowQuality) {
+        return {
+          magnet: matchMagnetLink
+            ? matchMagnetLink[1].replace(`&amp;`, `&`)
+            : null,
+          quality: matchHdTvShowQuality ? `HD` : `SD`,
+          name: matchName ? matchName[1] : null,
+          uploaded: matchDate ? matchDate[1] : null,
+          size: matchSize ? `${matchSize[1]} ${matchSize[2]}` : null,
+          seeder: matchSeeder ? parseInt(matchSeeder[1]) : null
+        }
+      }
+    })
   }
 }
