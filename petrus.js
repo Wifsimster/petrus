@@ -66,25 +66,35 @@ module.exports = class {
 
       await browser.close()
 
-      const downloads = this.parseInfo(rows, showQuery)
+      const downloads = this.parseInfo(rows)
 
       const bestDownload = this.getBestPossibleDownload(downloads)
 
-      return bestDownload.magnet
+      if (bestDownload) {
+        return bestDownload.magnet
+      }
+
+      return null
     } catch (err) {
       console.error(err)
     }
   }
 
   static getBestPossibleDownload(downloads) {
-    downloads.map(item => {
-      if (!/season/i.exec(item.name)) {
-        return item.magnet
+    for (let i = 0; i < downloads.length; i++) {
+      if (
+        typeof downloads === `object` &&
+        downloads[i] &&
+        downloads[i].name &&
+        /season/i.exec(downloads[i].name) === null
+      ) {
+        return downloads[i]
       }
-    })
+    }
+    return null
   }
 
-  static parseInfo(rows, showName) {
+  static parseInfo(rows) {
     return rows.map(row => {
       let matchMagnetLink = /href="(magnet:[\S]+)"\s/g.exec(row)
       let matchTvShowQuality = /href="\/browse\/205[\S]*"/g.exec(row)
