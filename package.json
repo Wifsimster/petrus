@@ -1,6 +1,6 @@
 {
   "name": "petrus",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A JavaScript library that can simply [...].",
   "main": "index.js",
   "scripts": {
