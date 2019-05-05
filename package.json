@@ -7,6 +7,10 @@
     "type": "git",
     "url": "git+https://github.com/Wifsimster/petrus.git"
   },
+  "scripts": {
+    "start": "node server.js",
+    "patch": "npm version patch && npm publish"
+  },
   "author": "",
   "license": "MIT",
   "bugs": {
