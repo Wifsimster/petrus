@@ -17,7 +17,7 @@ module.exports = [
   // `Game of Thrones`,
   // `The 100`,
   // `The Flash`,
-  // `Modern Family`
+  `Modern Family`
   // `Happy`,
   // `Strike Back`,
   // `You re the Worst,`

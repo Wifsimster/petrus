@@ -17,21 +17,18 @@ A JavaScript library that can simply grab magnet link from The Pirate Bay and ad
 npm install petrus
 ```
 
-Create a `transmission-config.js` file :
-
 ```javascript
-module.exports = {
+const Petrus = require("petrus")
+
+// Define Transmission config
+const petrus = new Petrus({
   host: `127.0.0.1`,
   port: `9091`,
   username: ``,
   password: ``
-}
-```
+})
 
-```javascript
-const Petrus = require("petrus")
-
-Petrus.run([`show_01`, `show_02`])
+petrus.run([`show_01`, `show_02`])
 ```
 
 That's all :)
