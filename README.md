@@ -28,6 +28,7 @@ const petrus = new Petrus({
   password: ``
 })
 
+// Return a promise
 petrus.run([`show_01`, `show_02`])
 ```
 

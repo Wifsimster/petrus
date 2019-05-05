@@ -11,25 +11,46 @@ module.exports = class {
     this.transmission = new Transmission(config)
   }
 
-  async run(shows) {
-    if (shows && shows.length > 0) {
-      shows.map(async show => {
-        const magnetUrl = await this.getMagnetLink(show)
+  run(shows) {
+    return new Promise((resolve, reject) => {
+      if (shows && shows.length > 0) {
+        let promises = []
 
-        if (magnetUrl) {
-          const download = await this.addMagnetLink(magnetUrl)
-          if (download && download.id) {
-            console.log(download)
+        shows.map(show => {
+          promises.push(this.addShowToDownload(show))
+        })
+
+        Promise.all(promises)
+          .then(results => {
+            resolve(results)
+          })
+          .catch(err => reject(err))
+      } else {
+        reject(`No show found !`)
+      }
+    })
+  }
+
+  addShowToDownload(show) {
+    return new Promise((resolve, reject) => {
+      this.getMagnetLink(show)
+        .then(magnetUrl => {
+          if (magnetUrl) {
+            this.addMagnetLink(magnetUrl)
+              .then(result => {
+                resolve(result)
+              })
+              .catch(err => {
+                reject(err)
+              })
           } else {
-            console.error(`Magnet link was not added to Transmission !`)
+            reject(`No magnet link found for "${show}"`)
           }
-        } else {
-          console.error(`No magnet link found for "${show}"`)
-        }
-      })
-    } else {
-      console.error(`No show found !`)
-    }
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
   }
 
   addMagnetLink(magnetLink) {

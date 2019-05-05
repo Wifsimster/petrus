@@ -4,4 +4,11 @@ const config = require("./transmission-config")
 
 const petrus = new Petrus(config)
 
-petrus.run(shows)
+petrus
+  .run(shows)
+  .then(results => {
+    console.log(results)
+  })
+  .catch(err => {
+    console.error(err)
+  })
