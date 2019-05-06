@@ -2,7 +2,7 @@
   "name": "petrus",
   "version": "1.0.3",
   "description": "A JavaScript library that can simply grab magnet link from The Pirate Bay and add it to Transmission.",
-  "main": "server.js",
+  "main": "petrus.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Wifsimster/petrus.git"
