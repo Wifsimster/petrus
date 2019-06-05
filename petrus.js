@@ -75,7 +75,7 @@ module.exports = class {
       const page = await browser.newPage()
       const showQuery = encodeURIComponent(query)
 
-      await page.goto(`https://thepiratebay.org/search/${showQuery}/0/7/0`) // Order by Seeder
+      await page.goto(`https://thepiratebay.org/search/${showQuery}/0/7/0`, { timeout: 0 }) // Order by Seeder
 
       const rows = await page.$$eval(`#searchResult > tbody > tr`, elements => {
         return elements.map(el => {
@@ -118,21 +118,15 @@ module.exports = class {
       let matchMagnetLink = /href="(magnet:[\S]+)"\s/g.exec(row)
       let matchTvShowQuality = /href="\/browse\/205[\S]*"/g.exec(row)
       let matchHdTvShowQuality = /href="\/browse\/208[\S]*"/g.exec(row)
-      let matchDate = /<font class="[\s\S]+">Uploaded ([\s\S]+)&nbsp;\d/g.exec(
-        row
-      )
-      let matchSize = /<font class="[\s\S]+">[\s\S]+Size ([\s\S]+)&nbsp;([\s\S]+),/g.exec(
-        row
-      )
+      let matchDate = /<font class="[\s\S]+">Uploaded ([\s\S]+)&nbsp;\d/g.exec(row)
+      let matchSize = /<font class="[\s\S]+">[\s\S]+Size ([\s\S]+)&nbsp;([\s\S]+),/g.exec(row)
       let matchSeeder = /<td align="right">([\d]+)<\/td>/.exec(row)
       let matchName = /href="\/torrent\/[\d]+\/([\S]+)"/.exec(row)
 
       // Return only `Tv Shows` or `HD - Tv Shows`
       if (matchHdTvShowQuality || matchTvShowQuality) {
         return {
-          magnet: matchMagnetLink
-            ? matchMagnetLink[1].replace(`&amp;`, `&`)
-            : null,
+          magnet: matchMagnetLink ? matchMagnetLink[1].replace(`&amp;`, `&`) : null,
           quality: matchHdTvShowQuality ? `HD` : `SD`,
           name: matchName ? matchName[1] : null,
           uploaded: matchDate ? matchDate[1] : null,
