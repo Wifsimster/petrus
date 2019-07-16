@@ -33,7 +33,7 @@ module.exports = class {
 
   addShowToDownload(show) {
     return new Promise((resolve, reject) => {
-      this.getMagnetLink(show)
+      Petrus.getMagnetLink(show)
         .then(magnetUrl => {
           if (magnetUrl) {
             this.addMagnetLink(magnetUrl)
@@ -69,7 +69,7 @@ module.exports = class {
     })
   }
 
-  async getMagnetLink(query) {
+  static async getMagnetLink(query) {
     try {
       const browser = await puppeteer.launch()
       const page = await browser.newPage()
@@ -99,7 +99,7 @@ module.exports = class {
     }
   }
 
-  getBestPossibleDownload(downloads) {
+  static getBestPossibleDownload(downloads) {
     for (let i = 0; i < downloads.length; i++) {
       if (
         typeof downloads === `object` &&
@@ -113,7 +113,7 @@ module.exports = class {
     return null
   }
 
-  parseInfo(rows) {
+  static parseInfo(rows) {
     return rows.map(row => {
       let matchMagnetLink = /href="(magnet:[\S]+)"\s/g.exec(row)
       let matchTvShowQuality = /href="\/browse\/205[\S]*"/g.exec(row)
