@@ -33,10 +33,10 @@ module.exports = class {
 
   addShowToDownload(show) {
     return new Promise((resolve, reject) => {
-      Petrus.getMagnetLink(show)
-        .then(magnetUrl => {
-          if (magnetUrl) {
-            this.addMagnetLink(magnetUrl)
+      Petrus.getBestEpisode(show)
+        .then(episode => {
+          if (episode && episode.magnetUrl) {
+            this.addMagnetLink(episode.magnetUrl)
               .then(result => {
                 resolve(result)
               })
@@ -69,7 +69,7 @@ module.exports = class {
     })
   }
 
-  static async getMagnetLink(query) {
+  static async getBestEpisode(query) {
     try {
       const browser = await puppeteer.launch()
       const page = await browser.newPage()
@@ -90,7 +90,7 @@ module.exports = class {
       const bestDownload = this.getBestPossibleDownload(downloads)
 
       if (bestDownload) {
-        return bestDownload.magnet
+        return bestDownload
       }
 
       return null
