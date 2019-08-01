@@ -69,7 +69,7 @@ module.exports = class {
     })
   }
 
-  static async getBestEpisode(query) {
+  static async search(query) {
     try {
       const browser = await puppeteer.launch()
       const page = await browser.newPage()
@@ -85,18 +85,22 @@ module.exports = class {
 
       await browser.close()
 
-      const downloads = this.parseInfo(rows)
-
-      const bestDownload = this.getBestPossibleDownload(downloads)
-
-      if (bestDownload) {
-        return bestDownload
-      }
-
-      return null
+      return this.parseInfo(rows)
     } catch (err) {
       console.error(err)
     }
+  }
+
+  static async getBestEpisode(query) {
+    const downloads = await this.search(query)
+
+    const bestDownload = this.getBestPossibleDownload(downloads)
+
+    if (bestDownload) {
+      return bestDownload
+    }
+
+    return null
   }
 
   static getBestPossibleDownload(downloads) {
