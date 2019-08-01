@@ -3,71 +3,10 @@
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  */
 
-const puppeteer = require("puppeteer")
-const Transmission = require("transmission")
+const puppeteer = require('puppeteer')
 
 module.exports = class {
-  constructor(config) {
-    this.transmission = new Transmission(config)
-  }
-
-  run(shows) {
-    return new Promise((resolve, reject) => {
-      if (shows && shows.length > 0) {
-        let promises = []
-
-        shows.map(show => {
-          promises.push(this.addShowToDownload(show))
-        })
-
-        Promise.all(promises)
-          .then(results => {
-            resolve(results)
-          })
-          .catch(err => reject(err))
-      } else {
-        reject(`No show found !`)
-      }
-    })
-  }
-
-  addShowToDownload(show) {
-    return new Promise((resolve, reject) => {
-      Petrus.getBestEpisode(show)
-        .then(episode => {
-          if (episode && episode.magnetUrl) {
-            this.addMagnetLink(episode.magnetUrl)
-              .then(result => {
-                resolve(result)
-              })
-              .catch(err => {
-                reject(err)
-              })
-          } else {
-            reject(`No magnet link found for "${show}"`)
-          }
-        })
-        .catch(err => {
-          reject(err)
-        })
-    })
-  }
-
-  addMagnetLink(magnetLink) {
-    return new Promise((resolve, reject) => {
-      if (this.transmission) {
-        this.transmission.addUrl(magnetLink, (err, arg) => {
-          if (!err) {
-            resolve(arg)
-          } else {
-            reject(err)
-          }
-        })
-      } else {
-        reject(`Transmission couldn't connect !)`)
-      }
-    })
-  }
+  constructor() {}
 
   static async search(query) {
     try {
