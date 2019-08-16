@@ -3,31 +3,48 @@
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  */
 
-const puppeteer = require('puppeteer')
+const https = require("https")
+
+const { JSDOM } = require("jsdom")
 
 module.exports = class {
   constructor() {}
 
   static async search(query) {
-    try {
-      const browser = await puppeteer.launch()
-      const page = await browser.newPage()
+    const rows = await this.scrap(query)
+    return this.parseInfo(rows)
+  }
+
+  static async scrap(query) {
+    return new Promise((resolve, reject) => {
       const showQuery = encodeURIComponent(query)
 
-      await page.goto(`https://thepiratebay.org/search/${showQuery}/0/7/0`, { timeout: 0 }) // Order by Seeder
+      https.get(`https://thepiratebay.org/search/${showQuery}/0/7/0`, response => {
+        const { statusCode, statusMessage } = response
 
-      const rows = await page.$$eval(`#searchResult > tbody > tr`, elements => {
-        return elements.map(el => {
-          return el.innerHTML
-        })
+        if (statusCode >= 400) {
+          reject({ code: statusCode, message: statusMessage })
+        } else {
+          let data = ""
+
+          response.on("data", chunk => {
+            data += chunk
+          })
+
+          response.on("end", () => {
+            const fragment = JSDOM.fragment(data)
+            const selector = fragment.querySelectorAll("tr")
+            var array = []
+
+            for (var i = 0; i < selector.length; i++) {
+              array.push(selector[i].innerHTML)
+            }
+
+            resolve(array)
+          })
+        }
       })
-
-      await browser.close()
-
-      return this.parseInfo(rows)
-    } catch (err) {
-      console.error(err)
-    }
+    })
   }
 
   static async getBestEpisode(query) {
@@ -57,7 +74,7 @@ module.exports = class {
   }
 
   static parseInfo(rows) {
-    return rows.map(row => {
+    var results = rows.map(row => {
       let matchMagnetLink = /href="(magnet:[\S]+)"\s/g.exec(row)
       let matchTvShowQuality = /href="\/browse\/205[\S]*"/g.exec(row)
       let matchHdTvShowQuality = /href="\/browse\/208[\S]*"/g.exec(row)
@@ -78,5 +95,7 @@ module.exports = class {
         }
       }
     })
+
+    return results.filter(i => i)
   }
 }
