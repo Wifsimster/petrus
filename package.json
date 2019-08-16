@@ -1,6 +1,6 @@
 {
   "name": "petrus",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "A JavaScript library that can simply grab magnet link from The Pirate Bay.",
   "main": "petrus.js",
   "repository": {
