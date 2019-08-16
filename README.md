@@ -1,35 +1,36 @@
 # Petrus
 
-A JavaScript library that can simply grab magnet link from The Pirate Bay and add it to Transmission :anchor:.
+A JavaScript library that can simply search and grab magnet link from The Pirate Bay :anchor:.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Wifsimster/petrus/blob/master/LICENSE)
 [![npm version](https://badge.fury.io/js/petrus.svg)](https://www.npmjs.com/package/petrus)
+[![Install size](https://packagephobia.now.sh/badge?p=petrus)](https://packagephobia.now.sh/result?p=petrus)
 
-**Core Features**
+## Install
 
-- Search a list of shows on TPB;
-- Extract the best magnet link avaible on the first page;
-- Add the magnet link to your Transmission server.
-
-**Quick start**
-
-```javascript
-npm install petrus
+```
+$ npm install petrus
 ```
 
-```javascript
+## Usage
+
+```js
 const Petrus = require("petrus")
 
-// Define Transmission config
-const petrus = new Petrus({
-  host: `127.0.0.1`,
-  port: `9091`,
-  username: ``,
-  password: ``
-})
-
-// Return a promise
-petrus.run([`show_01`, `show_02`])
+Petrus.search("Final Space S01E01")
+  .then(results => {
+    console.log(results)
+  })
+  .catch(err => {
+    console.error(err)
+  })
 ```
 
-That's all :)
+## Documentation
+
+#### search([query], [category])
+
+- `query` `<string>` Query to search
+- `category` `<string>` Optional, precise the category to search. Default is all categories. [`Music`, `Movies`, `TV shows`, `HD - Movies`, `HD - TV shows`]
+
+Response is a list of object : `[{ magnetLink, name, quality, seeder, size, uploaded }]`
