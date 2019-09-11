@@ -37,31 +37,39 @@ module.exports = class {
       const showQuery = encodeURIComponent(query)
       const categoryURL = this.getCategory(category)
 
-      https.get(`https://thepiratebay.org/search/${showQuery}/${categoryURL}`, response => {
-        const { statusCode, statusMessage } = response
+      https
+        .get(
+          `https://thepiratebay.org/search/${showQuery}/${categoryURL}`,
+          response => {
+            const { statusCode, statusMessage } = response
 
-        if (statusCode >= 400) {
-          reject({ code: statusCode, message: statusMessage })
-        } else {
-          let data = ""
+            if (statusCode >= 400) {
+              reject({ code: statusCode, message: statusMessage })
+            } else {
+              let data = ""
 
-          response.on("data", chunk => {
-            data += chunk
-          })
+              response.on("data", chunk => {
+                data += chunk
+              })
 
-          response.on("end", () => {
-            const fragment = JSDOM.fragment(data)
-            const selector = fragment.querySelectorAll("tr")
-            var array = []
+              response.on("end", () => {
+                const fragment = JSDOM.fragment(data)
+                const selector = fragment.querySelectorAll("tr")
+                var array = []
 
-            for (var i = 0; i < selector.length; i++) {
-              array.push(selector[i].innerHTML)
+                for (var i = 0; i < selector.length; i++) {
+                  array.push(selector[i].innerHTML)
+                }
+
+                resolve(array)
+              })
             }
-
-            resolve(array)
-          })
-        }
-      })
+          }
+        )
+        .on("error", e => {
+          console.error(e)
+          reject(e)
+        })
     })
   }
 
@@ -83,15 +91,21 @@ module.exports = class {
   static parseInfo(rows) {
     var results = rows.map(row => {
       let matchMagnetLink = /href="(magnet:[\S]+)"\s/g.exec(row)
-      let matchDate = /<font class="[\s\S]+">Uploaded ([\s\S]+)&nbsp;\d/g.exec(row)
-      let matchSize = /<font class="[\s\S]+">[\s\S]+Size ([\s\S]+)&nbsp;([\s\S]+),/g.exec(row)
+      let matchDate = /<font class="[\s\S]+">Uploaded ([\s\S]+)&nbsp;\d/g.exec(
+        row
+      )
+      let matchSize = /<font class="[\s\S]+">[\s\S]+Size ([\s\S]+)&nbsp;([\s\S]+),/g.exec(
+        row
+      )
       let matchSeeder = /<td align="right">([\d]+)<\/td>/.exec(row)
       let matchName = /href="\/torrent\/[\d]+\/([\S]+)"/.exec(row)
 
       // Return only `Tv Shows` or `HD - Tv Shows`
       // if (matchHdTvShowQuality || matchTvShowQuality) {
       return {
-        magnetLink: matchMagnetLink ? matchMagnetLink[1].replace(`&amp;`, `&`) : null,
+        magnetLink: matchMagnetLink
+          ? matchMagnetLink[1].replace(`&amp;`, `&`)
+          : null,
         quality: this.getQuality(row),
         name: matchName ? matchName[1] : null,
         uploaded: matchDate ? matchDate[1] : null,
