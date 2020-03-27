@@ -8,7 +8,13 @@ const https = require("https")
 const { JSDOM } = require("jsdom")
 
 module.exports = class {
-  constructor() {}
+  constructor() {
+  }
+  
+  static getBaseUrl() {
+    //return 'https://thepiratebay.org'
+    return 'https://thepiratebays.info'
+  }
 
   static async search(query) {
     const rows = await this.scrap(query)
@@ -37,7 +43,7 @@ module.exports = class {
       const showQuery = encodeURIComponent(query)
       const categoryURL = this.getCategory(category)
 
-      https.get(`https://thepiratebay.org/search/${showQuery}/${categoryURL}`, response => {
+      https.get(`${this.getBaseUrl()}/search/${showQuery}/${categoryURL}`, response => {
         const { statusCode, statusMessage } = response
 
         if (statusCode >= 400) {
