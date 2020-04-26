@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/Wifsimster/petrus#readme",
   "dependencies": {
-    "jsdom": "^16.2.1"
+    "jsdom": "^16.2.2"
   }
 }
