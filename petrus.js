@@ -11,8 +11,9 @@ module.exports = class {
   constructor() {} 
 
   static getBaseUrl() {
-    //return 'https://thepiratebay.org'
-    return 'https://thepiratebays.info'
+    return 'https://thepiratebay.org'
+    // return 'https://thepiratebays.info'
+    // return https://thepirate-bay.org/home/
   }
 
   static async search(query) {
