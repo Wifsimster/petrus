@@ -1,9 +1,14 @@
-const Petrus = require("../petrus")
+import { Petrus } from '../src/petrus.js'
 
-Petrus.search("Final Space")
-  .then(results => {
-    console.log(results)
-  })
-  .catch(err => {
-    console.error(err)
-  })
+async function main() {
+  let petrus = new Petrus()
+
+  let data = await petrus.search('Final Space')
+    .catch(err => { console.error(err) })
+
+  if(data) {
+    console.log(data)
+  }
+}
+
+main()

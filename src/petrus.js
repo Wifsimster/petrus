@@ -2,43 +2,47 @@
  * Petrus
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  */
+import https from 'https'
+import JSDOM from 'jsdom'
 
-const https = require("https")
+class Petrus {
+  /**
+  * Some exemples : 
+  * https://thepiratebay.org
+  * https://thepiratebays.info
+  * https://thepirate-bay.org/home/
+  */
+  constructor(url = 'https://thepiratebay.org') {
+    this.baseUrl = url
+  } 
 
-const { JSDOM } = require("jsdom")
-
-module.exports = class {
-  constructor() {} 
-
-  static getBaseUrl() {
-    return 'https://thepiratebay.org'
-    // return 'https://thepiratebays.info'
-    // return https://thepirate-bay.org/home/
+  getBaseUrl() {
+    return this.baseUrl
   }
 
-  static async search(query) {
+  async search(query) {
     const rows = await this.scrap(query)
     return this.parseInfo(rows)
   }
 
-  static getCategory(val) {
+  getCategory(val) {
     switch (val) {
-      case "Music":
-        return `0/99/101`
-      case "Movies":
-        return `0/99/201`
-      case "TV shows":
-        return `0/99/205`
-      case "HD - Movies":
-        return `0/99/207`
-      case "HD - TV shows":
-        return `0/99/208`
-      default:
-        return `0/7/0`
+    case 'Music':
+      return '0/99/101'
+    case 'Movies':
+      return '0/99/201'
+    case 'TV shows':
+      return '0/99/205'
+    case 'HD - Movies':
+      return '0/99/207'
+    case 'HD - TV shows':
+      return '0/99/208'
+    default:
+      return '0/7/0'
     }
   }
 
-  static async scrap(query, category) {
+  async scrap(query, category) {
     return new Promise((resolve, reject) => {
       const showQuery = encodeURIComponent(query)
       const categoryURL = this.getCategory(category)
@@ -52,18 +56,18 @@ module.exports = class {
             if (statusCode >= 400) {
               reject({ code: statusCode, message: statusMessage })
             } else {
-              let data = ""
+              let data = ''
 
-              response.on("data", chunk => {
+              response.on('data', chunk => {
                 data += chunk
               })
 
-              response.on("end", () => {
+              response.on('end', () => {
                 const fragment = JSDOM.fragment(data)
-                const selector = fragment.querySelectorAll("tr")
-                var array = []
+                const selector = fragment.querySelectorAll('tr')
+                let array = []
 
-                for (var i = 0; i < selector.length; i++) {
+                for (let i = 0; i < selector.length; i++) {
                   array.push(selector[i].innerHTML)
                 }
 
@@ -72,7 +76,7 @@ module.exports = class {
             }
           }
         )
-        .on("error", e => {
+        .on('error', e => {
           console.error(e)
           reject(e)
         })
@@ -84,18 +88,18 @@ module.exports = class {
     let matchHdTvShowQuality = /href="\/browse\/208[\S]*"/g.exec(row)
 
     if (matchTvShowQuality) {
-      return `SD`
+      return 'SD'
     }
 
     if (matchHdTvShowQuality) {
-      return `HD`
+      return 'HD'
     }
 
-    return ""
+    return ''
   }
 
   static parseInfo(rows) {
-    var results = rows.map(row => {
+    let results = rows.map(row => {
       let matchMagnetLink = /href="(magnet:[\S]+)"\s/g.exec(row)
       let matchDate = /<font class="[\s\S]+">Uploaded ([\s\S]+)&nbsp;\d/g.exec(
         row
@@ -106,11 +110,9 @@ module.exports = class {
       let matchSeeder = /<td align="right">([\d]+)<\/td>/.exec(row)
       let matchName = /href="\/torrent\/[\d]+\/([\S]+)"/.exec(row)
 
-      // Return only `Tv Shows` or `HD - Tv Shows`
-      // if (matchHdTvShowQuality || matchTvShowQuality) {
       return {
         magnetLink: matchMagnetLink
-          ? matchMagnetLink[1].replace(`&amp;`, `&`)
+          ? matchMagnetLink[1].replace('&amp;', '&')
           : null,
         quality: this.getQuality(row),
         name: matchName ? matchName[1] : null,
@@ -118,9 +120,11 @@ module.exports = class {
         size: matchSize ? `${matchSize[1]} ${matchSize[2]}` : null,
         seeder: matchSeeder ? parseInt(matchSeeder[1]) : null
       }
-      // }
     })
 
     return results.filter(i => i.magnetLink)
   }
 }
+
+export { Petrus }
+export default Petrus
