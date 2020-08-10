@@ -1,6 +1,6 @@
 # Petrus
 
-A JavaScript library that can simply search and grab magnet link from The Pirate Bay :anchor:.
+A JavaScript library that can simply search and grab magnet link from The Pirate Bay :anchor: (or TPB clones).
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Wifsimster/petrus/blob/master/LICENSE)
 [![npm version](https://badge.fury.io/js/petrus.svg)](https://www.npmjs.com/package/petrus)
