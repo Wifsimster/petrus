@@ -15,15 +15,21 @@ $ npm install petrus
 ## Usage
 
 ```js
-const Petrus = require("petrus")
+import { Petrus } from 'petrus'
 
-Petrus.search("Final Space S01E01")
-  .then(results => {
-    console.log(results)
-  })
-  .catch(err => {
-    console.error(err)
-  })
+async function main() {
+  let petrus = new Petrus()
+
+  let data = await petrus
+    .search('Final Space S01E01')
+    .catch(err => { console.error(err) })
+
+  if(data) {
+    console.log(data)
+  }
+}
+
+main()
 ```
 
 ## Documentation
