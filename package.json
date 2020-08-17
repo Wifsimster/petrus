@@ -19,7 +19,9 @@
   },
   "homepage": "https://github.com/Wifsimster/petrus#readme",
   "dependencies": {
-    "jsdom": "^16.4.0"
+    "jsdom": "^16.4.0",
+    "puppeteer": "^5.2.1",
+    "puppeteer-core": "^5.2.1"
   },
   "devDependencies": {
     "eslint": "^7.6.0"
