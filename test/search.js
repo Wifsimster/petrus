@@ -4,7 +4,7 @@ async function main() {
   let petrus = new Petrus()
 
   let data = await petrus
-    .search('Final Space S01E01')
+    .search('Final Space')
     .catch(err => { console.error(err) })
 
   if(data) {

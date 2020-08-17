@@ -3,7 +3,9 @@
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  */
 import https from 'https'
-import JSDOM from 'jsdom'
+import jsdom from 'jsdom'
+
+const { JSDOM } = jsdom
 
 class Petrus {
   /**
@@ -98,7 +100,7 @@ class Petrus {
     return ''
   }
 
-  static parseInfo(rows) {
+  parseInfo(rows) {
     let results = rows.map(row => {
       let matchMagnetLink = /href="(magnet:[\S]+)"\s/g.exec(row)
       let matchDate = /<font class="[\s\S]+">Uploaded ([\s\S]+)&nbsp;\d/g.exec(
