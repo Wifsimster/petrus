@@ -34,6 +34,13 @@ main()
 
 ## Documentation
 
+#### Petrus([url])
+
+- `url` `<string>` Hostname to load, default is : `https://thepiratebay.org`
+
+Instantiate a new `Petrus` class.
+
+
 #### search([query], [category])
 
 - `query` `<string>` Query to search
